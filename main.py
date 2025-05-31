@@ -1,17 +1,22 @@
+import sys
+import os
 import asyncio
 
 import streamlit as st
 import streamlit_antd_components as sac
 
+# somewhat tricky way to solve the import error in backend 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'backend'))
+
 async def main():
     st.set_page_config(
-        page_title="MIC",
+        page_title="InsRec",
         page_icon="🎹",
         layout="wide",
         initial_sidebar_state="expanded", 
         menu_items={
-            'Get Help': 'https://www.google.com',
-            'Report a bug': "https://www.google.com",
+            'Get Help': 'https://github.com/Ladbaby/InsRec',
+            'Report a bug': "https://github.com/Ladbaby/InsRec",
             'About': "## Made by Ladbaby"
         }
     )
