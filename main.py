@@ -26,13 +26,13 @@ async def main():
     with st.sidebar:
         menu = sac.menu(
             items=[
-                sac.MenuItem('MIC', icon='house-fill'),
+                sac.MenuItem('InsRec', icon='house-fill'),
             ],
             key='menu',
             open_index=[1]
         )
 
-    if menu == "MIC":
+    if menu == "InsRec":
         await MIC()
 
 asyncio.run(main())
