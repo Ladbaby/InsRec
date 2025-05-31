@@ -155,7 +155,14 @@ async def MIC():
 
                         st.metric(label="Most likely", value=list(class_dict.keys())[top_k_indices[-1]], delta=f"{np.average(pred_class_all[:, top_k_indices[-1]]) * 100:.2f} %")
                         st.link_button("wiki", class_dict[list(class_dict.keys())[top_k_indices[-1]]]["wiki"], icon=":material/open_in_new:")
-                        st.line_chart(pd.DataFrame(pred_class_all_top_k_percentage, columns=top_k_class_names))
+                        st.line_chart(
+                            pd.DataFrame(
+                                pred_class_all_top_k_percentage,
+                                columns=top_k_class_names
+                            ),
+                            x_label="Time (seconds)",
+                            y_label="Probability (%)"
+                        )
                 except yaml.YAMLError as exc:
                     print(f"{PYOMNITS_PATH}utils/configs.py: Exception when parsing {yaml_configs_path}: {exc}")
                     exit(1) 
