@@ -32,7 +32,7 @@ async def MIC():
     model_option = st.selectbox(
         "Choose a model",
         [
-            "_OpenMIC_Adaptor"
+            "Linear"
         ]
     )
     dataset_option = "OpenMIC"
