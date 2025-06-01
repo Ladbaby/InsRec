@@ -1,14 +1,17 @@
+import io
 import os
 import yaml
 from pathlib import Path
 from dataclasses import fields
 from typing import BinaryIO
 
+import torch
 import streamlit as st
 import numpy as np
 import pandas as pd
 import torch.nn.functional as F
 from torch import Tensor
+from pydub import AudioSegment
 
 from backend.exp.exp_main import Exp_Main
 from backend.utils.ExpConfigs import ExpConfigs
@@ -33,7 +36,16 @@ async def MIC():
         "Choose a model",
         [
             "Pyraformer",
-            "Linear"
+            "Reformer",
+            "Nonstationary_Transformer",
+            "TimesNet",
+            "MambaSimple",
+            "LightTS",
+            "Transformer",
+            "DLinear",
+            "Linear",
+            "GRU_D",
+            "Autoformer",
         ]
     )
     dataset_option = "OpenMIC"
@@ -131,20 +143,18 @@ async def MIC():
 
                         exp = Exp_Main(configs)
                         pred_class_all = []
-                        total_length = 0 # seconds
-                        batch: dict[Tensor] # typing support
+                        total_length = len(AudioSegment.from_file(io.BytesIO(audio_bytes))) // 1000 # seconds
                         model_output: dict[Tensor] # typing support
                         for batch, model_output in exp.inference(data_loader):
                             pred_class: Tensor = model_output["pred_class"] # (BATCH_SIZE, N_CLASSES)
                             probabilities: np.ndarray = F.softmax(pred_class, dim=1).detach().cpu().numpy() # (BATCH_SIZE, N_CLASSES)
 
-                            x_mask: Tensor = batch["x_mask"] # (BATCH_SIZE, SEQ_LEN), used to indicate padding values
-                            is_padding: np.ndarray = (x_mask.sum(dim=1) > 0).int().detach().cpu().numpy() # (BATCH_SIZE)
-                            probabilities_filtered = probabilities[is_padding > 0] # reemove padded samples in batch
+                            pred_class_all.append(probabilities)
 
-                            pred_class_all.append(probabilities_filtered)
-                            total_length += int(x_mask.sum().detach().cpu().item() / 16000) # divide by 16k sampling rate
-                        pred_class_all = np.concat(pred_class_all, axis=0) # (N_SAMPLES, N_CLASSES)
+                        torch.cuda.empty_cache()
+                        del exp
+
+                        pred_class_all = np.concat(pred_class_all, axis=0)[:total_length] # (N_SAMPLES, N_CLASSES)
 
                         pred_class_all_sum = np.sum(pred_class_all, axis=0) # (N_CLASSES)
                         top_k_indices = np.argsort(pred_class_all_sum)[-n_classes_option:] # (n_classes_option)
