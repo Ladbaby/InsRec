@@ -72,13 +72,21 @@ Change "Linear" to the model name you want, where available options can be found
 
 You may find reference experimental settings (e.g., learning rate, d_model) for the chosen model in its scripts under `backend/scripts/CHOSEN_MODEL`.
 
-Delete the config file at `backend/configs/_OpenMIC_Adaptor/OpenMIC.yaml`, then start training by:
+Start training by:
 
 ```shell
 cd backend
-sh scripts/_OpenMIC_Adaptor/OpenMIC.sh
+sh scripts/CHOSEN_MODEL/OpenMIC.sh
 ```
 
 Model weights `pytorch_model.bin` will be found under `backend/storage/results`
 
-To load your trained model, replace the `pytorch_model.bin` file under `backend/storage/pretrained/OpenMIC/_OpenMIC_Adaptor`
+To load your trained model, place the `pytorch_model.bin` file under `backend/storage/pretrained/OpenMIC/CHOSEN_MODEL` folder.
+
+## Model Performance Benchmark
+
+Test set performance on OpenMIC dataset:
+
+|Model|Accuracy|Precision|Recall|F1
+|---|---|---|---|---|
+|Linear|64.32|62.79|52.85|55.69
