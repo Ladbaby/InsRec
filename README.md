@@ -89,4 +89,16 @@ Test set performance on OpenMIC dataset:
 
 |Model|Accuracy|Precision|Recall|F1
 |---|---|---|---|---|
+|Pyraformer|67.66|62.70|59.46|59.85
+|Reformer|67.34|63.73|59.21|59.91
+|Nonstationary Transformer|67.03|62.77|59.12|59.51
+|TimesNet|65.83|60.28|57.14|57.21
+|Mamba|65.78|61.07|56.46|57.5
+|TSMixer|65.63|61.83|55.91|57.55
+|LightTS|65.26|61.09|54.53|56.58
+|Transformer|65.10|66.46|56.20|57.74
+|DLinear|64.48|61.67|54.67|56.36
 |Linear|64.32|62.79|52.85|55.69
+|GRU-D|64.32|58.75|54.91|55.08
+|mTAN|60.89|53.87|44.75|46.73
+|Autoformer|54.48|46.35|44.40|44.68
