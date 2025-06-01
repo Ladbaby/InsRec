@@ -32,6 +32,7 @@ async def MIC():
     model_option = st.selectbox(
         "Choose a model",
         [
+            "Pyraformer",
             "Linear"
         ]
     )
@@ -168,5 +169,6 @@ async def MIC():
                     exit(1) 
         else:
             st.error(f"""Config file for model '{model_option}' does not exist under '{yaml_configs_path}'. Follow these procedures to generate one:
-            - `cd backend`
-            - `sh scripts/{model_option}/{dataset_option}.sh`. Kill it via ctrl+c after you see any outputs in terminal.""")
+
+- `cd backend`
+- `sh scripts/{model_option}/{dataset_option}.sh` Then kill it via ctrl+c after you see any outputs in terminal.""")
