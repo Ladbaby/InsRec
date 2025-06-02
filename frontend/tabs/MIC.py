@@ -10,6 +10,7 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import torch.nn.functional as F
+import altair as alt
 from torch import Tensor
 from pydub import AudioSegment
 
@@ -164,16 +165,61 @@ async def MIC():
 
                         pred_class_all_top_k_percentage = pred_class_all_top_k_percentage.repeat(10, axis=0)[:total_length]
 
+                        # sort the result in decending order
+                        pred_class_all_top_k_percentage_sums = np.sum(pred_class_all_top_k_percentage, axis=0)  # shape: (n_classes,)
+                        sort_indices = np.argsort(pred_class_all_top_k_percentage_sums)[::-1]  # descending order
+                        pred_class_all_top_k_percentage_sorted = pred_class_all_top_k_percentage[:, sort_indices]
+                        # Step 4: Sort the class names list in the same order
+                        top_k_class_names_sorted = [top_k_class_names[i] for i in sort_indices]
+
                         st.metric(label="Most likely", value=list(class_dict.keys())[top_k_indices[-1]], delta=f"{np.average(pred_class_all[:, top_k_indices[-1]]) * 100:.2f} %")
                         st.link_button("wiki", class_dict[list(class_dict.keys())[top_k_indices[-1]]]["wiki"], icon=":material/open_in_new:")
-                        st.line_chart(
-                            pd.DataFrame(
-                                pred_class_all_top_k_percentage,
-                                columns=top_k_class_names
-                            ),
-                            x_label="Time (seconds)",
-                            y_label="Probability (%)"
-                        )
+                        # st.line_chart(
+                        #     pd.DataFrame(
+                        #         pred_class_all_top_k_percentage_sorted,
+                        #         columns=top_k_class_names_sorted
+                        #     ),
+                        #     x_label="Time (seconds)",
+                        #     y_label="Similarity (%)"
+                        # )
+
+                        # Prepare data for Altair
+                        n_samples, n_classes = pred_class_all_top_k_percentage_sorted.shape
+
+                        # Create a long-format DataFrame
+                        data_list = []
+                        for sample_idx in range(n_samples):
+                            for class_idx, class_name in enumerate(top_k_class_names_sorted):
+                                data_list.append({
+                                    'Time (seconds)': sample_idx,
+                                    'Instrument': class_name,
+                                    'Similarity (%)': pred_class_all_top_k_percentage_sorted[sample_idx, class_idx]
+                                })
+
+                        df = pd.DataFrame(data_list)
+
+                        # Create the Altair chart
+                        chart = alt.Chart(df).mark_line(
+                            point=False,
+                            strokeWidth=3
+                        ).add_selection(
+                            alt.selection_multi(fields=['Instrument'])
+                        ).encode(
+                            x=alt.X('Time (seconds):O', 
+                                    title='Time (seconds)',
+                                    axis=alt.Axis(labelAngle=0)),
+                            y=alt.Y('Similarity (%):Q', 
+                                    title='Similarity (%)',
+                                    scale=alt.Scale(zero=False)),
+                            color=alt.Color('Instrument:N', 
+                                            title='Instrument',
+                                            sort=top_k_class_names_sorted,  # Maintain sorted order in legend
+                                            scale=alt.Scale(scheme='category10')),
+                            # opacity=alt.condition(alt.datum.Class, alt.value(0.8), alt.value(0.2)),
+                            tooltip=['Time (seconds):O', 'Instrument:N', 'Similarity (%):Q']
+                        ).interactive()
+
+                        st.altair_chart(chart, use_container_width=True)
                 except yaml.YAMLError as exc:
                     print(f"{PYOMNITS_PATH}utils/configs.py: Exception when parsing {yaml_configs_path}: {exc}")
                     exit(1) 
