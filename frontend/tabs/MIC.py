@@ -144,7 +144,7 @@ async def MIC():
 
                         exp = Exp_Main(configs)
                         pred_class_all = []
-                        total_length = len(AudioSegment.from_file(io.BytesIO(audio_bytes))) // 1000 # seconds
+                        total_length = round(len(AudioSegment.from_file(io.BytesIO(audio_bytes))) / 1000) # seconds
                         model_output: dict[Tensor] # typing support
                         for batch, model_output in exp.inference(data_loader):
                             pred_class: Tensor = model_output["pred_class"] # (BATCH_SIZE, N_CLASSES)
@@ -155,45 +155,28 @@ async def MIC():
                         torch.cuda.empty_cache()
                         del exp
 
-                        pred_class_all = np.concat(pred_class_all, axis=0)[:total_length] # (N_SAMPLES, N_CLASSES)
+                        pred_class_all = np.concat(pred_class_all, axis=0).repeat(10, axis=0)[:total_length] # (TIME_LENGTH, N_CLASSES) each sample is 10s
 
-                        pred_class_all_sum = np.sum(pred_class_all, axis=0) # (N_CLASSES)
-                        top_k_indices = np.argsort(pred_class_all_sum)[-n_classes_option:] # (n_classes_option)
+                        pred_class_all_sum = np.sum(pred_class_all, axis=0) # (TIME_LENGTH)
+                        top_k_indices = np.argsort(pred_class_all_sum)[::-1][:n_classes_option] # (n_classes_option)
                         top_k_class_names = [list(class_dict.keys())[index] for index in top_k_indices] # (n_classes_option)
-                        pred_class_all_top_k = pred_class_all[:, top_k_indices] # (N_SAMPLES, n_classes_option)
-                        pred_class_all_top_k_percentage = pred_class_all_top_k * 100 # (N_SAMPLES, n_classes_option)
+                        pred_class_all_top_k = pred_class_all[:, top_k_indices] # (TIME_LENGTH, n_classes_option)
+                        pred_class_all_top_k_percentage = pred_class_all_top_k * 100 # (TIME_LENGTH, n_classes_option)
 
-                        pred_class_all_top_k_percentage = pred_class_all_top_k_percentage.repeat(10, axis=0)[:total_length]
-
-                        # sort the result in decending order
-                        pred_class_all_top_k_percentage_sums = np.sum(pred_class_all_top_k_percentage, axis=0)  # shape: (n_classes,)
-                        sort_indices = np.argsort(pred_class_all_top_k_percentage_sums)[::-1]  # descending order
-                        pred_class_all_top_k_percentage_sorted = pred_class_all_top_k_percentage[:, sort_indices]
-                        # Step 4: Sort the class names list in the same order
-                        top_k_class_names_sorted = [top_k_class_names[i] for i in sort_indices]
-
-                        st.metric(label="Most likely", value=list(class_dict.keys())[top_k_indices[-1]], delta=f"{np.average(pred_class_all[:, top_k_indices[-1]]) * 100:.2f} %")
-                        st.link_button("wiki", class_dict[list(class_dict.keys())[top_k_indices[-1]]]["wiki"], icon=":material/open_in_new:")
-                        # st.line_chart(
-                        #     pd.DataFrame(
-                        #         pred_class_all_top_k_percentage_sorted,
-                        #         columns=top_k_class_names_sorted
-                        #     ),
-                        #     x_label="Time (seconds)",
-                        #     y_label="Similarity (%)"
-                        # )
+                        st.metric(label="Most likely", value=top_k_class_names[0], delta=f"{np.average(pred_class_all_top_k_percentage[:, 0]):.2f} %")
+                        st.link_button("wiki", class_dict[list(class_dict.keys())[top_k_indices[0]]]["wiki"], icon=":material/open_in_new:")
 
                         # Prepare data for Altair
-                        n_samples, n_classes = pred_class_all_top_k_percentage_sorted.shape
+                        n_samples, n_classes = pred_class_all_top_k_percentage.shape
 
                         # Create a long-format DataFrame
                         data_list = []
                         for sample_idx in range(n_samples):
-                            for class_idx, class_name in enumerate(top_k_class_names_sorted):
+                            for class_idx, class_name in enumerate(top_k_class_names):
                                 data_list.append({
                                     'Time (seconds)': sample_idx,
                                     'Instrument': class_name,
-                                    'Similarity (%)': pred_class_all_top_k_percentage_sorted[sample_idx, class_idx]
+                                    'Similarity (%)': pred_class_all_top_k_percentage[sample_idx, class_idx]
                                 })
 
                         df = pd.DataFrame(data_list)
@@ -213,7 +196,7 @@ async def MIC():
                                     scale=alt.Scale(zero=False)),
                             color=alt.Color('Instrument:N', 
                                             title='Instrument',
-                                            sort=top_k_class_names_sorted,  # Maintain sorted order in legend
+                                            sort=top_k_class_names,  # Maintain sorted order in legend
                                             scale=alt.Scale(scheme='category10')),
                             # opacity=alt.condition(alt.datum.Class, alt.value(0.8), alt.value(0.2)),
                             tooltip=['Time (seconds):O', 'Instrument:N', 'Similarity (%):Q']
