@@ -43,6 +43,7 @@ async def MIC():
             "MambaSimple",
             "LightTS",
             "Transformer",
+            "FEDformer",
             "DLinear",
             "Linear",
             "GRU_D",
