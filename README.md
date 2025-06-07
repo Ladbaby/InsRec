@@ -54,6 +54,8 @@ streamlit run main.py
 
 or running `sh main.sh`.
 
+During the first run, it will prompt you whether to download checkpoint files for models in the terminal.
+
 ### Advanced: Train a Model
 
 Neural network training is powered by [PyOmniTS](https://github.com/Ladbaby/PyOmniTS) framework.
@@ -62,8 +64,11 @@ The training procedure for existing models on OpenMIC-2018 dataset is detailed h
 
 #### Obtain OpenMIC Dataset
 
-Download the dataset from [here](https://zenodo.org/records/1432913), and place the extracted result under `backend/storage/datasets/OpenMIC`.
+- Download the dataset from [here](https://zenodo.org/records/1432913), and place the extracted result under `backend/storage/datasets/OpenMIC`.
 Create the parent folder if not exists.
+- Download the processed VGGish representations of corresponding audios from [huggingface](https://huggingface.co/datasets/Ladbaby/InsRec-datasets/blob/main/OpenMIC/processed/x_repr_time.npy), and place it under `backend/storage/datasets/OpenMIC/processed`
+
+    > It's worth noting that these VGGish representations are different from the "X" in `backend/storage/datasets/OpenMIC/openmic-2018.npz`. Our representations are obtained using the pretrained [PyTorch VGGish pipeline](https://docs.pytorch.org/audio/master/generated/torchaudio.prototype.pipelines.VGGISH.html) and the PCA weights from [torchvggish](https://github.com/harritaylor/torchvggish/releases/download/v0.1/vggish_pca_params-970ea276.pth).
 
 #### Train the Model
 
