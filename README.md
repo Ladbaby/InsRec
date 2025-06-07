@@ -5,11 +5,36 @@ Using state-of-the-art 📈 time series analysis neural networks for musical ins
 🚀 Powered by [PyOmniTS](https://github.com/Ladbaby/PyOmniTS), the unified framework for time series analysis.
 
 > [!IMPORTANT]
-> Accuracy is not guaranteed! Refer to the benchmark section for model performance details.
+> Accuracy is not guaranteed (and I'm not an expert in music)! Refer to the benchmark section for model performance details.
 
 ## 📷 Screenshot
 
 ![](images/screenshot_MIC.png)
+
+## 🌟 Features
+
+Models are currently trained on [OpenMIC-2018 datasets](https://zenodo.org/records/1432913), which includes 20 types of "instruments":
+
+0. 🪗 Accordion [[wiki]](https://en.wikipedia.org/wiki/Accordion)
+1. 🪕 Banjo [[wiki]](https://en.wikipedia.org/wiki/Banjo)
+2. Bass [[wiki]](https://en.wikipedia.org/wiki/Bass_(sound))
+3. Cello [[wiki]](https://en.wikipedia.org/wiki/Cello)
+4. Clarinet [[wiki]](https://en.wikipedia.org/wiki/Clarinet)
+5. Cymbals [[wiki]](https://en.wikipedia.org/wiki/Cymbals)
+6. 🥁 Drums [[wiki]](https://en.wikipedia.org/wiki/Drum)
+7. Flute [[wiki]](https://en.wikipedia.org/wiki/Flute)
+8. 🎸 Guitar [[wiki]](https://en.wikipedia.org/wiki/Guitar)
+9. Mallet Percussion [[wiki]](https://en.wikipedia.org/wiki/Keyboard_percussion_instrument)
+10. Mandolin [[wiki]](https://en.wikipedia.org/wiki/Mandolin)
+11. Organ [[wiki]](https://en.wikipedia.org/wiki/Organ_(music))
+12. 🎹 Piano [[wiki]](https://en.wikipedia.org/wiki/Piano)
+13. 🎷 Saxophone [[wiki]](https://en.wikipedia.org/wiki/Saxophone)
+14. Synthesizer [[wiki]](https://en.wikipedia.org/wiki/Synthesizer)
+15. Trombone [[wiki]](https://en.wikipedia.org/wiki/Trombone)
+16. 🎺 Trumpet [[wiki]](https://en.wikipedia.org/wiki/Trumpet)
+17. Ukulele [[wiki]](https://en.wikipedia.org/wiki/Ukulele)
+18. 🎻 Violin [[wiki]](https://en.wikipedia.org/wiki/Violin)
+19. 🗣️ Voice [[wiki]](https://en.wikipedia.org/wiki/Human_voice)
 
 ## ⏬ Installation
 
