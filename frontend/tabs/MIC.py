@@ -52,7 +52,7 @@ async def MIC():
     )
     dataset_option = "OpenMIC"
 
-    n_classes_option = st.slider("Number of instruments to display", min_value=1, max_value=20, value=2, step=1)
+    n_classes_option = st.slider("Number of instruments to display", min_value=1, max_value=20, value=5, step=1)
 
     if st.button("Analyze", type="primary"):
         yaml_configs_path = Path(f"{PYOMNITS_PATH}configs/{model_option}/{dataset_option}.yaml")
