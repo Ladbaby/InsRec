@@ -42,6 +42,8 @@ Using state-of-the-art 📈 time series analysis neural networks for musical ins
     pip install -r requirements.txt
     ```
 
+    > Some models may require extra dependencies, which can be found in comments of `backend/requirements.txt`.
+
 ## 🚀 Usage
 
 ### Easy: Use Existing Model Weights
