@@ -4,18 +4,23 @@ Using state-of-the-art 📈 time series analysis neural networks for musical ins
 
 🚀 Powered by [PyOmniTS](https://github.com/Ladbaby/PyOmniTS), the unified framework for time series analysis.
 
+> [!IMPORTANT]
+> Accuracy is not guaranteed! Refer to the benchmark section for model performance details.
+
+## 📷 Screenshot
+
 ![](images/screenshot_MIC.png)
 
-## Installation
+## ⏬ Installation
 
 ### From Source
 
-1. Clone this repository and its submodules, then checkout to branch `MIC` for backend submodule.
+1. Clone this repository and its submodules, then checkout to branch `InsRec` for backend submodule.
 
     ```shell
     git clone --recurse-submodules https://github.com/Ladbaby/InsRec
     cd InsRec/backend
-    git checkout MIC
+    git checkout InsRec
     cd ..
     ```
 
@@ -24,11 +29,11 @@ Using state-of-the-art 📈 time series analysis neural networks for musical ins
     for example, using [Miniconda](https://docs.conda.io/en/latest/miniconda.html)/[Anaconda](https://www.anaconda.com/):
 
     ```shell
-    conda create -n InsRec python=3.11
+    conda create -n InsRec python=3.12
     conda activate InsRec
     ```
 
-    > Python 3.11 has been tested. Other versions may also work.
+    > Python 3.11 & 3.12 have been tested. Other versions may also work.
 
 3. Install dependencies in the created environment
 
@@ -37,7 +42,7 @@ Using state-of-the-art 📈 time series analysis neural networks for musical ins
     pip install -r requirements.txt
     ```
 
-## Usage
+## 🚀 Usage
 
 ### Easy: Use Existing Model Weights
 
@@ -53,6 +58,8 @@ or running `sh main.sh`.
 
 Neural network training is powered by [PyOmniTS](https://github.com/Ladbaby/PyOmniTS) framework.
 
+The training procedure for existing models on OpenMIC-2018 dataset is detailed here.
+
 #### Obtain OpenMIC Dataset
 
 Download the dataset from [here](https://zenodo.org/records/1432913), and place the extracted result under `backend/storage/datasets/OpenMIC`.
@@ -60,17 +67,7 @@ Create the parent folder if not exists.
 
 #### Train the Model
 
-The training procedure for new model is still a little bit complex now, later updates will try to simply it.
-
-In `backend/models/_OpenMIC_Adaptor.py`:
-
-```python
-model_module = importlib.import_module("models." + "Linear")
-```
-
-Change "Linear" to the model name you want, where available options can be found in `backend/models`
-
-You may find reference experimental settings (e.g., learning rate, d_model) for the chosen model in its scripts under `backend/scripts/CHOSEN_MODEL`.
+You may find experimental settings (e.g., learning rate, d_model) for the chosen model in its scripts under `backend/scripts/CHOSEN_MODEL/OpenMIC.sh`.
 
 Start training by:
 
@@ -81,11 +78,11 @@ sh scripts/CHOSEN_MODEL/OpenMIC.sh
 
 Model weights `pytorch_model.bin` will be found under `backend/storage/results`
 
-To load your trained model, place the `pytorch_model.bin` file under `backend/storage/pretrained/OpenMIC/CHOSEN_MODEL` folder.
+To infer using your trained weights instead, replace the `pytorch_model.bin` file under `backend/storage/pretrained/OpenMIC/CHOSEN_MODEL` folder with your own.
 
-## Model Performance Benchmark
+## 📊 Model Performance Benchmark
 
-Test set performance on OpenMIC dataset:
+Test set performance on OpenMIC-2018 dataset:
 
 |Model|Accuracy|Precision|Recall|F1
 |---|---|---|---|---|
@@ -114,3 +111,10 @@ Test set performance on OpenMIC dataset:
 |MICN|36.67|34.91|29.31|30.01
 |Crossformer|21.72|1.09|5.00|1.78
 |FiLM|21.72|1.09|5.00|1.78
+
+
+Existing state-of-the-art time series models mainly learns in the time domain, while audios processing models primarily learns in the frequency domain. 
+Also, audio (e.g., 16k every second) is far longer than any time series in research datasets (e.g., 720).
+Therefore, [VGGish](https://docs.pytorch.org/audio/master/generated/torchaudio.prototype.pipelines.VGGISH.html) is currently used as the encoder to convert audio input as embeddings, and time series models take them as input instead (it makes little sense I know, but this is possibly the only way for painless adaptation).
+
+Further improvement may require changing network architecture of time series models, such that VGGish embeddings are treated as representations instead of time series.
