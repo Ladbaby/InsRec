@@ -13,7 +13,7 @@ Using state-of-the-art 📈 time series analysis neural networks for musical ins
 
 ## 🌟 Features
 
-Models are currently trained on [OpenMIC-2018 datasets](https://zenodo.org/records/1432913), which includes 20 types of "instruments":
+Models are currently trained on the [OpenMIC-2018 dataset](https://zenodo.org/records/1432913), which includes 20 types of "instruments":
 
 0. 🪗 Accordion [[wiki]](https://en.wikipedia.org/wiki/Accordion)
 1. 🪕 Banjo [[wiki]](https://en.wikipedia.org/wiki/Banjo)
@@ -40,7 +40,7 @@ Models are currently trained on [OpenMIC-2018 datasets](https://zenodo.org/recor
 
 ### From Source
 
-1. Clone this repository and its submodules, then checkout to branch `InsRec` for backend submodule.
+1. Clone this repository and its submodules, then checkout to branch `InsRec` for backend submodule.jh
 
     ```shell
     git clone --recurse-submodules https://github.com/Ladbaby/InsRec
@@ -49,7 +49,7 @@ Models are currently trained on [OpenMIC-2018 datasets](https://zenodo.org/recor
     cd ..
     ```
 
-2. Create a python virtual environment via the tool of your choice
+2. Create a python virtual environment via the tool of your choice.
 
     for example, using [Miniconda](https://docs.conda.io/en/latest/miniconda.html)/[Anaconda](https://www.anaconda.com/):
 
@@ -60,7 +60,7 @@ Models are currently trained on [OpenMIC-2018 datasets](https://zenodo.org/recor
 
     > Python 3.11 & 3.12 have been tested. Other versions may also work.
 
-3. Install dependencies in the created environment
+3. Install dependencies in the created environment.
 
     ```shell
     pip install -r backend/requirements.txt
@@ -93,7 +93,7 @@ The training procedure for existing models on OpenMIC-2018 dataset is detailed h
 
 - Download the dataset from [here](https://zenodo.org/records/1432913), and place the extracted result under `backend/storage/datasets/OpenMIC`.
 Create the parent folder if not exists.
-- Download the processed VGGish representations of corresponding audios from [huggingface](https://huggingface.co/datasets/Ladbaby/InsRec-datasets/blob/main/OpenMIC/processed/x_repr_times.npy), and place it under `backend/storage/datasets/OpenMIC/processed`
+- Download the processed VGGish representations of corresponding audios from [huggingface](https://huggingface.co/datasets/Ladbaby/InsRec-datasets/blob/main/OpenMIC/processed/x_repr_times.npy), and place it under `backend/storage/datasets/OpenMIC/processed`.
 
     > It's worth noting that these VGGish representations are different from the "X" in `backend/storage/datasets/OpenMIC/openmic-2018.npz`. Our representations are obtained using the pretrained [PyTorch VGGish pipeline](https://docs.pytorch.org/audio/master/generated/torchaudio.prototype.pipelines.VGGISH.html) and the PCA weights from [torchvggish](https://github.com/harritaylor/torchvggish/releases/download/v0.1/vggish_pca_params-970ea276.pth).
 
@@ -149,4 +149,4 @@ Existing state-of-the-art time series models mainly learns in the time domain, w
 Also, audio (e.g., 16k every second) is far longer than any time series in research datasets (e.g., 720).
 Therefore, [VGGish](https://docs.pytorch.org/audio/master/generated/torchaudio.prototype.pipelines.VGGISH.html) is currently used as the encoder to convert audio input as embeddings, and time series models take them as input instead (it makes little sense I know, but this is possibly the only way for painless adaptation).
 
-Further improvement may require changing network architecture of time series models, such that VGGish embeddings are treated as representations instead of time series.
+Further improvements may require changing network architecture of time series models, such that VGGish embeddings are treated as representations instead of time series.
